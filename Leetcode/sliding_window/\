@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+  vector<int> decrypt(vector<int> &code, int k) {
+    vector<int> b(code.size(), 0);
+    if (k == 0)
+      return b;
+
+    int n = code.size();
+    if (k > 0) {
+      int sum = 0;
+      for (int i = 1; i <= k; i++) {
+        sum += code[i % n];
+      }
+      b[0] = sum;
+      int idx = 0;
+      for (int i = 1; i < n; i++) {
+        sum -= code[i % n];
+        sum += code[(i + k) % n];
+
+        b[i] = sum;
+      }
+      return b;
+    } else {
+      int sum = 0;
+      for (int i = n - 1; i >= k; i--) {
+        sum += code[i % n];
+      }
+      b[0] = sum;
+      for (int i = 1; i < n; i++) {
+        sum -= code[k % n];
+        sum += code[(i - 1) % n];
+        b[i] = sum;
+      }
+      return b;
+    }
+  }
+};
+int main() {
+  vector<int> code = {5, 7, 1, 4};
+  int k = 3;
+  Solution s;
+  vector<int> ans = s.decrypt(code, k);
+
+  for (int i : ans)
+    cout << i << " ";
+}
