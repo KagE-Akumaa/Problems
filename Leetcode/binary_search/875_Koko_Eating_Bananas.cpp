@@ -4,20 +4,17 @@ using namespace std;
 class Solution {
 public:
   int minEatingSpeed(vector<int> &piles, int h) {
-    int l = 1, r = *max_element(piles.begin(), piles.end());
+    int r = *max_element(piles.begin(), piles.end());
+    int l = 1;
 
-    // If possible for k hours then possible for k + 1 need to check for check
-    // -1
-    int ans = INT_MAX;
-    auto check = [&](int m) -> bool {
-      // How to check for k-> speed in h hours ?
+    int ans = 0;
+    auto check = [&](int mid) -> int {
       int hours = 0;
-      for (int i = 0; i < piles.size(); i++) {
-        if (piles[i] <= m) {
+      for (int &i : piles) {
+        if (i % mid == 0)
           hours++;
-        } else {
-          hours += (piles[i] + m - 1) / m;
-        }
+        else
+          hours += (i / mid) + 1;
       }
       return hours <= h;
     };
@@ -25,8 +22,7 @@ public:
       int m = l + (r - l) / 2;
 
       if (check(m)) {
-        ans = min(ans, m);
-        // Move r to mid -1
+        ans = m;
         r = m - 1;
       } else
         l = m + 1;
@@ -34,10 +30,3 @@ public:
     return ans;
   }
 };
-int main() {
-  vector<int> nums = {3, 6, 7, 11};
-  int h = 8;
-  Solution s;
-
-  cout << s.minEatingSpeed(nums, h);
-}
