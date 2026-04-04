@@ -43,50 +43,33 @@ class Solution {
             cout << endl;
         }
     }
-    vector<pair<int, int>> dir = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     int removeStones(vector<vector<int>> &stones) {
-        //
-        int n = stones.size();
-        Dsu d(n * n);
 
-        vector<vector<int>> grid(n, vector<int>(n, 0));
-
-        for (auto &e : stones) {
-            grid[e[0]][e[1]] = 1;
-        }
-
-        vector<pair<int, int>> rem;
-        print(grid);
         int count = 0;
-        auto check = [&](int row, int col) -> bool {
-            for (auto &it : dir) {
-                int r = it.first + row, c = it.second + col;
 
-                if (r >= 0 && r < n && c >= 0 && c < n && grid[r][c] == 1) {
-                    return true;
+        Dsu d(stones.size());
+        int n = 2;
+        auto check = [&](int r, int c, int idx) {
+            for (int i = idx + 1; i < stones.size(); i++) {
+                int cr = stones[i][0];
+                int cc = stones[i][1];
+
+                if (cr == r || cc == c) {
+                    d.myUnion(idx, i);
                 }
             }
-            return false;
         };
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (grid[i][j] == 1) {
-                    // We need to check its four direction if that contains a
-                    // stone that means we can delete this so we union it with
-                    // the position of the new stone
+        for (int i = 0; i < stones.size(); i++) {
+            int r = stones[i][0];
+            int c = stones[i][1];
 
-                    if (check(i, j)) {
-                        count++;
-                        // Change the stone
-                        rem.push_back({i, j});
-                    }
-                }
-            }
+            check(r, c, i);
         }
-        for (auto &it : rem) {
-            grid[it.first][it.second] = 0;
+        // now count the unique parents
+        unordered_set<int> st;
+        for (int i = 0; i < stones.size(); i++) {
+            st.insert(d.find(i));
         }
-        print(grid);
-        return count;
+        return stones.size() - st.size();
     }
 };
