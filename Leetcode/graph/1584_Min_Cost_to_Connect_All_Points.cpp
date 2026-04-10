@@ -65,11 +65,30 @@ class Solution {
             cout << endl;
         }
     }
+    void formGraph(vector<vector<pair<int, int>>> &graph,
+                   vector<vector<int>> &edges) {
+
+        for (auto &it : edges) {
+            int u = it[0];
+            int v = it[1];
+            int w = it[2];
+
+            graph[u].push_back({v, w});
+            graph[v].push_back({u, w});
+        }
+    }
     int minCostConnectPoints(vector<vector<int>> &points) {
         vector<vector<int>> edges;
 
         formEdges(edges, points);
 
+        // NOTE: This is for prims
+        vector<vector<pair<int, int>>> graph(points.size());
+
+        formGraph(graph, edges);
+
+        // NOTE: This is using Ksushkal's algorithm
+#if 0
         sort(edges.begin(), edges.end(),
              [](const vector<int> &a, const vector<int> &b) {
                  return a[2] < b[2];
@@ -93,6 +112,33 @@ class Solution {
             cost += w;
         }
 
+        return cost;
+#endif
+        // NOTE: Now using prims algorithm
+
+        int cost = 0;
+        vector<bool> visited(graph.size(), false);
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+
+        // NOTE: in pq its weight first - wt, v
+        pq.push({0, 0});
+
+        while (!pq.empty()) {
+            auto [wt, u] = pq.top();
+            pq.pop();
+
+            if (visited[u])
+                continue;
+
+            visited[u] = true;
+            cost += wt;
+
+            for (auto &nb : graph[u]) {
+                if (!visited[nb.first]) {
+                    pq.push({nb.second, nb.first});
+                }
+            }
+        }
         return cost;
     }
 };
