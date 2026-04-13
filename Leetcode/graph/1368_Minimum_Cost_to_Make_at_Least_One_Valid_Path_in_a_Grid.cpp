@@ -20,29 +20,46 @@ does not have to be the shortest.
 You can modify the sign on a cell with cost = 1. You can modify the sign on a
 cell one time only.
     */
-// Binary search can be applied for this if possible to do in k cost then
-// possible for > k cost the range could be the 0 to m * n (suppose change
-// required for all cells)
 class Solution {
   public:
+    vector<pair<int, int>> dir = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
     int minCost(vector<vector<int>> &grid) {
         //
         int m = grid.size(), n = grid[0].size();
-        int l = 0, r = m * n;
 
-        int ans = INT_MAX;
+        vector<vector<int>> dist(m, vector<int>(n, INT_MAX));
 
-        auto check = [&](int mid) -> bool {
-            // How to check for k counts ?
-        };
-        while (l <= r) {
-            int mid = l + (r - l) / 2;
+        dist[0][0] = 0;
+        deque<pair<int, int>> dq;
 
-            if (check(mid)) {
-                ans = min(ans, mid);
-                r = mid - 1;
-            } else
-                l = mid + 1;
+        dq.push_back({0, 0});
+        pair<int, int> dest{m - 1, n - 1};
+
+        while (!dq.empty()) {
+            auto [row, col] = dq.front();
+            dq.pop_front();
+
+            for (int i = 0; i < dir.size(); i++) {
+                int w = (grid[row][col] == i + 1) ? 0 : 1;
+
+                auto &it = dir[i];
+
+                int r = it.first + row, c = it.second + col;
+
+                if (r >= 0 && c >= 0 && r < m && c < n) {
+
+                    if (dist[r][c] > dist[row][col] + w) {
+                        dist[r][c] = dist[row][col] + w;
+
+                        if (w == 0) {
+                            dq.push_front({r, c});
+                        } else {
+                            dq.push_back({r, c});
+                        }
+                    }
+                }
+            }
         }
+        return dist[m - 1][n - 1];
     }
 };
