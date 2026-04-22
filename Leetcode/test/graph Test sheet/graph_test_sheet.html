@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Graph Test Sheet</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: system-ui, sans-serif;
+}
+
+.sheet { padding: 1.5rem; max-width: 900px; margin: auto; }
+
+.header h1 { font-size: 22px; }
+.header p { font-size: 14px; color: #94a3b8; margin-top: 4px; }
+
+.section { margin-top: 2rem; }
+
+.section-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.problem-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 140px 80px 40px;
+  gap: 10px;
+  padding: 10px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.problem-row.solved { opacity: 0.5; }
+
+.num { font-size: 12px; color: #64748b; }
+
+.title { font-size: 14px; }
+
+.lc-link {
+  font-size: 12px;
+  color: #38bdf8;
+  text-decoration: none;
+}
+.lc-link:hover { text-decoration: underline; }
+
+.diff {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.easy { background: #064e3b; color: #34d399; }
+.medium { background: #78350f; color: #fbbf24; }
+.hard { background: #7f1d1d; color: #f87171; }
+
+.check-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.check-box.done {
+  background: #22c55e;
+  color: black;
+}
+
+.progress-bar-wrap { margin: 1.5rem 0; }
+
+.progress-track {
+  height: 6px;
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #22c55e;
+  width: 0%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sheet">
+  <div class="header">
+    <h1>Graph Test Sheet</h1>
+    <p>All topics · Track your progress</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div id="prog-label">0 / 25 solved</div>
+    <div class="progress-track">
+      <div id="prog-fill" class="progress-fill"></div>
+    </div>
+  </div>
+
+  <div id="sections"></div>
+</div>
+
+<script>
+const data = [
+  {
+    topic: "BFS / Multi-source BFS",
+    problems: [
+      { id: 1, title: "Number of Islands", slug: "number-of-islands", diff: "medium" },
+      { id: 2, title: "Rotting Oranges", slug: "rotting-oranges", diff: "medium" },
+      { id: 3, title: "01 Matrix", slug: "01-matrix", diff: "medium" },
+      { id: 4, title: "Walls and Gates", slug: "walls-and-gates", diff: "medium" },
+      { id: 5, title: "Snakes and Ladders", slug: "snakes-and-ladders", diff: "medium" }
+    ]
+  },
+  {
+    topic: "DFS / Cycle Detection",
+    problems: [
+      { id: 6, title: "Clone Graph", slug: "clone-graph", diff: "medium" },
+      { id: 7, title: "Course Schedule", slug: "course-schedule", diff: "medium" },
+      { id: 8, title: "Pacific Atlantic Water Flow", slug: "pacific-atlantic-water-flow", diff: "medium" },
+      { id: 9, title: "Number of Provinces", slug: "number-of-provinces", diff: "medium" },
+      { id: 10, title: "Find Eventual Safe States", slug: "find-eventual-safe-states", diff: "medium" }
+    ]
+  },
+  {
+    topic: "Topological Sort",
+    problems: [
+      { id: 11, title: "Course Schedule II", slug: "course-schedule-ii", diff: "medium" },
+      { id: 12, title: "Alien Dictionary", slug: "alien-dictionary", diff: "hard" },
+      { id: 13, title: "Parallel Courses III", slug: "parallel-courses-iii", diff: "hard" }
+    ]
+  },
+  {
+    topic: "DSU / Union-Find",
+    problems: [
+      { id: 14, title: "Number of Connected Components", slug: "number-of-connected-components-in-an-undirected-graph", diff: "medium" },
+      { id: 15, title: "Redundant Connection", slug: "redundant-connection", diff: "medium" },
+      { id: 16, title: "Most Stones Removed", slug: "most-stones-removed-with-same-row-or-column", diff: "medium" },
+      { id: 17, title: "Accounts Merge", slug: "accounts-merge", diff: "medium" },
+      { id: 18, title: "Satisfiability of Equality Equations", slug: "satisfiability-of-equality-equations", diff: "medium" }
+    ]
+  },
+  {
+    topic: "Dijkstra",
+    problems: [
+      { id: 19, title: "Network Delay Time", slug: "network-delay-time", diff: "medium" },
+      { id: 20, title: "Path with Minimum Effort", slug: "path-with-minimum-effort", diff: "medium" },
+      { id: 21, title: "Path with Maximum Probability", slug: "path-with-maximum-probability", diff: "medium" },
+      { id: 22, title: "Swim in Rising Water", slug: "swim-in-rising-water", diff: "hard" }
+    ]
+  },
+  {
+    topic: "MST",
+    problems: [
+      { id: 23, title: "Min Cost to Connect All Points", slug: "min-cost-to-connect-all-points", diff: "medium" },
+      { id: 24, title: "Connecting Cities With Minimum Cost", slug: "connecting-cities-with-minimum-cost", diff: "medium" },
+      { id: 25, title: "Optimize Water Distribution", slug: "optimize-water-distribution-in-a-village", diff: "hard" }
+    ]
+  }
+];
+
+const TOTAL = 25;
+const solved = new Set(JSON.parse(localStorage.getItem("solved") || "[]"));
+
+function save() {
+  localStorage.setItem("solved", JSON.stringify([...solved]));
+}
+
+function updateProgress() {
+  const n = solved.size;
+  const pct = Math.round((n / TOTAL) * 100);
+  document.getElementById("prog-label").textContent = `${n} / ${TOTAL} solved`;
+  document.getElementById("prog-fill").style.width = pct + "%";
+}
+
+function toggleSolved(id, checkEl, rowEl) {
+  if (solved.has(id)) {
+    solved.delete(id);
+    checkEl.textContent = "";
+    checkEl.classList.remove("done");
+    rowEl.classList.remove("solved");
+  } else {
+    solved.add(id);
+    checkEl.textContent = "✓";
+    checkEl.classList.add("done");
+    rowEl.classList.add("solved");
+  }
+  save();
+  updateProgress();
+}
+
+const container = document.getElementById("sections");
+
+data.forEach(sec => {
+  const div = document.createElement("div");
+  div.className = "section";
+
+  const title = document.createElement("div");
+  title.className = "section-title";
+  title.textContent = sec.topic;
+  div.appendChild(title);
+
+  sec.problems.forEach((p, i) => {
+    const row = document.createElement("div");
+    row.className = "problem-row";
+
+    if (solved.has(p.id)) row.classList.add("solved");
+
+    const num = document.createElement("div");
+    num.className = "num";
+    num.textContent = i + 1;
+
+    const t = document.createElement("div");
+    t.className = "title";
+    t.textContent = p.title;
+
+    const link = document.createElement("a");
+    link.className = "lc-link";
+    link.href = `https://leetcode.com/problems/${p.slug}/`;
+    link.target = "_blank";
+    link.textContent = "Solve";
+
+    const diff = document.createElement("span");
+    diff.className = "diff " + p.diff;
+    diff.textContent = p.diff;
+
+    const check = document.createElement("div");
+    check.className = "check-box";
+
+    if (solved.has(p.id)) {
+      check.textContent = "✓";
+      check.classList.add("done");
+    }
+
+    check.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleSolved(p.id, check, row);
+    });
+
+    row.appendChild(num);
+    row.appendChild(t);
+    row.appendChild(link);
+    row.appendChild(diff);
+    row.appendChild(check);
+
+    div.appendChild(row);
+  });
+
+  container.appendChild(div);
+});
+
+updateProgress();
+</script>
+
+</body>
+</html>

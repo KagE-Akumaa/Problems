@@ -39,6 +39,7 @@ class Solution {
     vector<pair<int, int>> dir = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
     int numIslands(vector<vector<char>> &grid) {
         int m = grid.size(), n = grid[0].size();
+#if 0
         Dsu d(m * n);
 
         auto check = [&](int row, int col) -> void {
@@ -72,5 +73,32 @@ class Solution {
             }
         }
         return st.size();
+#endif
+        int count = 0;
+        vector<vector<bool>> visited(m, vector<bool>(n, false));
+
+        auto dfs = [&](auto self, int row, int col) -> void {
+            if (grid[row][col] == '1') {
+                visited[row][col] = true;
+
+                for (auto &it : dir) {
+                    int r = it.first + row, c = it.second + col;
+
+                    if (r >= 0 && r < m && c >= 0 && c < n && !visited[r][c] &&
+                        grid[r][c] == '1') {
+                        self(self, r, c);
+                    }
+                }
+            }
+        };
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!visited[i][j] && grid[i][j] == '1') {
+                    dfs(dfs, i, j);
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 };
