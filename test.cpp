@@ -1,12 +1,11 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-
+void solve() {}
 int main() {
 
-  int arr[] = {14, 1, 5, 12};
-  int n = 4;
-
-  for (int i = 0; i < n; i++)
-    cout << *(arr + i) << " ";
+    int t = 1;
+    cin >> t;
+    while (t--)
+        solve();
 }
