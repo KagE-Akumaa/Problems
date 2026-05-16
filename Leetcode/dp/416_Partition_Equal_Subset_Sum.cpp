@@ -1,43 +1,48 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// OBSERVATION: We need to find 2 subset such that there sum should be same so
+// technically we need to find a subset whose sum = total_sum / 2 as subset1 +
+// subset2 = total_sum and both are equal so 2subset = total_sum or subset =
+// total_sum / 2 , Also if total_sum is odd we can not get 2 equal subset
 class Solution {
       public:
         bool isPossible(vector<int> &nums, int target, int i,
                         vector<vector<int>> &dp) {
                 if (target == 0)
                         return true;
-                if (i == nums.size())
+                if (i >= nums.size())
                         return false;
 
-                if (dp[i][target] != -1)
+                if (dp[i][target] != -1) {
                         return dp[i][target];
-
-                if (nums[i] <= target) {
-                        bool choose =
-                            isPossible(nums, target - nums[i], i + 1, dp);
-                        bool not_choose = isPossible(nums, target, i + 1, dp);
-
-                        return dp[i][target] = choose || not_choose;
-                } else {
-                        return dp[i][target] =
-                                   isPossible(nums, target, i + 1, dp);
                 }
+                if (target >= nums[i]) {
+                        int pick =
+                            isPossible(nums, target - nums[i], i + 1, dp);
+                        int not_pick = isPossible(nums, target, i + 1, dp);
+
+                        return dp[i][target] = pick || not_pick;
+                }
+
+                return dp[i][target] = isPossible(nums, target, i + 1, dp);
         }
         bool canPartition(vector<int> &nums) {
+                int total_sum = accumulate(nums.begin(), nums.end(), 0);
 
-                int target_sum = accumulate(nums.begin(), nums.end(), 0);
-                if (target_sum & 1) {
+                if (total_sum & 1)
                         return false;
-                }
+
+                int target = total_sum / 2;
 
 #if 0
-                vector<vector<int>> dp(nums.size() + 1,
-                                       vector<int>(target_sum / 2 + 1, -1));
+                //NOTE: This is memoized
 
-                return isPossible(nums, target_sum / 2, 0, dp);
+                vector<vector<int>> dp(nums.size(),
+                                       vector<int>(target + 1, -1));
+
+                return isPossible(nums, target, 0, dp);
 #endif
-
 #if 0
 
                 // NOTE: This is Bottom up dp - 2d
@@ -72,7 +77,6 @@ class Solution {
                 return dp[nums.size() - 1][target_sum / 2];
 #endif
                 // NOTE: This is using 1d dp
-                int target = target_sum / 2;
 
                 vector<bool> dp(target + 1, false);
 
@@ -88,10 +92,3 @@ class Solution {
                 return dp[target];
         }
 };
-
-int main() {
-        vector<int> nums{1, 5, 11, 5};
-        Solution s;
-
-        cout << s.canPartition(nums) << endl;
-}
